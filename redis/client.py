@@ -212,7 +212,7 @@ class StrictRedis(object):
         string_keys_to_dict('SORT', sort_return_tuples),
         string_keys_to_dict('ZSCORE ZINCRBY', float_or_none),
         string_keys_to_dict(
-            'FLUSHALL FLUSHDB LSET LTRIM MSET RENAME '
+            'RESTORE FLUSHALL FLUSHDB LSET LTRIM MSET RENAME '
             'SAVE SELECT SHUTDOWN SLAVEOF WATCH UNWATCH',
             lambda r: nativestr(r) == 'OK'
         ),
@@ -585,6 +585,20 @@ class StrictRedis(object):
         Return the value at key ``name``, or None if the key doesn't exist
         """
         return self.execute_command('GET', name)
+
+    def dump(self, name):
+        """
+        Dump the key.
+        """
+        return self.execute_command('DUMP', name, parse='GET')
+
+
+    def restore(self, name, timeout, val):
+        """
+        Return key with given value.
+        """
+        return self.execute_command('RESTORE', name, timeout, val)
+
 
     def __getitem__(self, name):
         """
